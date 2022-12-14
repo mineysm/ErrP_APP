@@ -53,7 +53,7 @@ for pno=1:26 % subject id
             end
             fprintf('Reading data from %s \n',data_path);
             data=readtable(data_path);
-             %  num of EEG channels 56, discard EOG 
+             %  num of EEG channels 56, 
             y_sel=table2array(data(:,2:57));
             ind=find(data.FeedBackEvent==1);
              y_sel = car_bpfilter(y_sel',car,cn,fs,lf,hf);
@@ -99,7 +99,7 @@ title('channel FCz (average of all sessions)','fontweight','bold')
 
 end
 
-save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\Kaggle P300 Speller\CAR_BP1-10\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1', 'ses2_errp', 'ses2_label', 'N_tst2');
+save(['D:\ErrPDatasets\Kaggle P300 Speller\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1', 'ses2_errp', 'ses2_label', 'N_tst2');
 
 
 end

@@ -35,8 +35,7 @@ for j=1:ses1(pno)
          label_1st_fbck=ac_ErrP_Label(signal(j).eeg,1);
          ses1_label = [ses1_label label_1st_fbck];
          y_sel=signal(j).eeg(2:13,:); 
-         %y_sel = car_bpfilter(y_sel,car,cn,fs,lf,hf);
-         y_sel=gp_lowpass_filtro_matrix(y_sel,[lf hf],4,fs);   
+         y_sel = car_bpfilter(y_sel,car,cn,fs,lf,hf);
          [errp1, ~]=ac_ErrP_data(y_sel,signal(j).eeg, 0.2);
          ses1_errp = cat(3,ses1_errp, errp1);
          N_tst1 = [N_tst1 size(label_1st_fbck,2)];
@@ -51,8 +50,7 @@ for j=1:ses2(pno)
         label_1st_fbck=ac_ErrP_Label(signal(j).eeg,1);
         ses2_label = [ses2_label label_1st_fbck];
          y_sel=signal(j).eeg(2:13,:); 
-         %y_sel = car_bpfilter(y_sel,car,cn,fs,lf,hf);
-         y_sel=gp_lowpass_filtro_matrix(y_sel,[lf hf],4,fs);   
+         y_sel = car_bpfilter(y_sel,car,cn,fs,lf,hf);
          [errp2, ~]=ac_ErrP_data(y_sel,signal(j).eeg, 0.2);
          ses2_errp = cat(3,ses2_errp, errp2);
          N_tst2 = [N_tst2 size(label_1st_fbck,2)];
@@ -74,72 +72,7 @@ ylabel('Amplitude (uV)','FontSize',8)
 title('EEG Signal at channel Fz (average of all sessions)','fontweight','bold')           
 
             
-%save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\LSC Speller\CFS\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1', 'ses2_errp', 'ses2_label', 'N_tst2');
+save(['D:\ErrPDatasets\LSC Speller\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1', 'ses2_errp', 'ses2_label', 'N_tst2');
 
 end
 
-errp_er1_all=mean(ses1_errp_all(:,:,ses1_label_all==1),3);
-errp_cr1_all=mean(ses1_errp_all(:,:,ses1_label_all==2),3);
-
-errp_er2_all=mean(ses2_errp_all(:,:,ses2_label_all==1),3);
-errp_cr2_all=mean(ses2_errp_all(:,:,ses2_label_all==2),3);
-
-
-figure; hold on; plot(t,errp_cr1_all(1,:),'k','linewidth',3) % channel Fz 
-plot(t,errp_er1_all(1,:),'r','linewidth',3)
-legend('Correct','Error');
-xlabel('time (s)','FontSize',8)
-ylabel('Amplitude (uV)','FontSize',8)
-title('EEG Signal at channel Fz (average of offline sessions)','fontweight','bold')           
-
-
-
-figure; hold on; plot(t,errp_cr2_all(1,:),'k','linewidth',3) % channel Fz 
-plot(t,errp_er2_all(1,:),'r','linewidth',3)
-legend('Correct','Error');
-xlabel('time (s)','FontSize',8)
-ylabel('Amplitude (uV)','FontSize',8)
-title('EEG Signal at channel Fz (average of online sessions)','fontweight','bold')           
-
-
-% P300
-lar=270;
-alt=150;
-canal=5; %Cz 2, Pz 6 CPz 5 Fz 1
-ld=3;
-lt=5;
-ls=8;
- 
-cr=find(ses1_label_all==2);
-er=find(ses1_label_all==1);
-
-errp_er1=er;
-errp_cr1=cr;
-errp_er11=mean(ses1_errp_all(:,:,errp_er1),3);
-errp_cr11=mean(ses1_errp_all(:,:,errp_cr1),3);
-
-std_dev = std(ses1_errp_all(:,:,errp_er1),[],3);
-curve3 = errp_er11 + std_dev;
-curve4 = errp_er11 - std_dev;
-% t2 = [t, fliplr(t)];
-area = [curve3, fliplr(curve4)];
-
-std_dev = std(ses1_errp_all(:,:,errp_cr1),[],3);
-curve3 = errp_cr11 + std_dev;
-curve4 = errp_cr11 - std_dev;
-t2 = [t, fliplr(t)];
-area2 = [curve3, fliplr(curve4)];
-
-figure;
-hold on;
-fill(t2, area(1,:), [.3 .3 .3], 'linestyle', 'none');
-fill(t2, area2(1,:), [0.5 0.3 0.3], 'linestyle', 'none');
-plot(t,errp_cr11(1,:),'k','linewidth',ld)
-plot(t,errp_er11(1,:),'r','linewidth',ld)
-h=legend('Correct letter','1º ErrP');
-xlabel('time (s)','FontSize',ls)
-ylabel('Amplitude (uV)','FontSize',ls)
-title('EEG Signal at channel Fz','fontweight','bold')
-set(gcf, 'Position', [500, 500, lar, alt])
-set(gca,'ydir','normal'); 
-set(h,'FontSize',lt,'fontweight','bold');

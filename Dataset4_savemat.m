@@ -5,7 +5,7 @@ clear;
 car=0; %common average reference
 lf=1; %lower freq.
 hf=10; %higher freq.
-fs = 256;HRI 
+fs = 256;
 expno=1; % 1-> cursor scenario, 2-> robot scenario
 participant = [2 3 4 5 6 7 8 9 10 11 13];
 plotfig=1; %option for plotting figures
@@ -58,7 +58,6 @@ for p=1:length(participant)
     % S8 Start robot head moving back
     % S9 End of trial
     
-    %EEG.data=gp_lowpass_filtro_matrix(EEG.data,[lf hf],4,fs);
     EEG.data = car_bpfilter(EEG.data(chind,:),car,cn,fs,lf,hf);
     
     %Pre-processing steps in the paper
@@ -113,7 +112,6 @@ for p=1:length(participant)
         twin = (FBstarttime+1-beforefdb*fs):(FBstarttime+fdtime*fs);
         
         y_cne = Xtrain(:, :, randId); 
-        y_cne= double(y_cne);
         vis = Ytrain(randId);
         
         N_tst(jj,1) = length(vis);
@@ -128,13 +126,11 @@ for p=1:length(participant)
         clear EEG1 EEGcor EEGerr y_cne
     end
     
-    
-    
-    ErrpHRI(p).sid = ['S_' num2str(p_id)];
-    ErrpHRI(p).ytarget_cne = ytarget_cne;
-    ErrpHRI(p).visual = visual;
-    ErrpHRI(p).N_tst = N_tst;
-    
+if expno==1
+save(['D:\ErrPDatasets\HRI (cursor)\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p)],'p_id','ytarget_cne', 'visual', 'N_tst');
+else
+save(['D:\ErrPDatasets\HRI (robot)\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p)],'p_id','ytarget_cne', 'visual', 'N_tst');
+end
     %%
     if plotfig==1 % Plot all channels
     tidx1 = find(visual==1);
@@ -168,7 +164,7 @@ for p=1:length(participant)
         end
     end
     subplot 212
-    %plot_rsquare(tpoints/1000, ressq_all)
+    plot_rsquare(tpoints/1000, ressq_all)
     axis normal
     end
     
@@ -191,10 +187,6 @@ xlabel('time (s)','FontSize',8)
 ylabel('Amplitude (uV)','FontSize',8)
 title('channel Fz (average of all subjects)','fontweight','bold')
 
-% if expno==1
-%     save  ErrpHRIcursor ErrpHRI
-% else
-%     save  ErrpHRIrobot ErrpHRI
-% end
+
 
 

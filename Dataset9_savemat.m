@@ -1,6 +1,6 @@
 %Mine Yasemin August 2021
 %load Virtual Cursor data and save as .mat files	
-% https://github.com/flowersteam/self_calibration_BCI_plosOne_2015 
+% https://github.com/flowersteam/self_calibration_BCI_plosOne_2015
 clear;
 pltopt=1;
 car=0;
@@ -8,7 +8,7 @@ lf=1;
 hf=10;
 N_tst1 = 0;
 
-for pno=1%:8
+for pno=1:8
 ses1_errp = [];
 ses1_label = [];
 fprintf("Subject %d\n",pno);  
@@ -49,6 +49,6 @@ ylabel('Amplitude (\muV)');
 title(['Grand average subject ' num2str(pno)]);
 end
 
-%save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\Virtual Cursor\CFS\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1');
+save(['D:\ErrPDatasets\Virtual Cursor\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1');
 
 end

@@ -19,7 +19,7 @@ p_id=participant(p);
 fprintf("Participant %d\n",p_id);  
 fprintf("---------------\n");
 fc=[0.5 20]; % 
-visual=[];
+Y2=[];
 
 %Calibration session
 if p_id<10
@@ -28,56 +28,49 @@ else
 EEG=pop_loadset(['D:\ErrPDatasets\Coadaptation\data_coadaptation\s',num2str(p_id),'\s',num2str(p_id),'_calib.set']);
 end
 [X1, Y1, ~]= preprocessdata(EEG, fc, beforefdb, fdtime, 150, car, lf, hf);
-
-ErrpCALIB(p).sid = ['S_' num2str(p_id)];
-ErrpCALIB(p).ytarget_cne = X1;
-ErrpCALIB(p).visual = Y1;
-ErrpCALIB(p).N_tst = length(Y1);
+N_tst1 = length(Y1);
 
 %Co-adaptation sessions
 for jj= 1: length(sessionno)
     if p_id<10
-    EEG1=pop_loadset(['D:\ErrPDatasets\Coadaptation\data_coadaptation\s0',num2str(p_id),'\s0',num2str(p_id),'_corl',num2str(sessionno(jj)),'.set']);
+    EEG2=pop_loadset(['D:\ErrPDatasets\Coadaptation\data_coadaptation\s0',num2str(p_id),'\s0',num2str(p_id),'_corl',num2str(sessionno(jj)),'.set']);
     else
-    EEG1=pop_loadset(['D:\ErrPDatasets\Coadaptation\data_coadaptation\s',num2str(p_id),'\s',num2str(p_id),'_corl',num2str(sessionno(jj)),'.set']);
+    EEG2=pop_loadset(['D:\ErrPDatasets\Coadaptation\data_coadaptation\s',num2str(p_id),'\s',num2str(p_id),'_corl',num2str(sessionno(jj)),'.set']);
     end
-    [y_cne, vis, twin]= preprocessdata(EEG1, fc, beforefdb, fdtime, 50,car, lf, hf);
+    [y_cne, vis, twin]= preprocessdata(EEG2, fc, beforefdb, fdtime, 50,car, lf, hf);
     
-    N_tst(jj,1) = length(vis);
-    visual=[visual vis];
+    N_tst2(jj,1) = length(vis);
+    Y2=[Y2 vis];
     
     if jj==1
-    ytarget_cne = y_cne;
+    X2 = y_cne;
     else
-    ytarget_cne = cat(3, ytarget_cne, y_cne);
+    X2 = cat(3, X2, y_cne);
     end
     
-    clear EEG1 y_cne vis
+    clear EEG2 y_cne vis
 end    
 
-ErrpCORL(p).sid = ['S_' num2str(p_id)];
-ErrpCORL(p).ytarget_cne = ytarget_cne;
-ErrpCORL(p).visual = visual;
-ErrpCORL(p).N_tst = N_tst;
+save(['D:\ErrPDatasets\Coadaptation\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p)],'X1','Y1', 'N_tst1', 'X2', 'Y2', 'N_tst2');
 
 
 if plotfig==1 % Plot all channels
 
-tidx1 = find(visual==1);
-tidx2 = find(visual==2);
-ztarget= ytarget_cne(:,:,tidx1);
-zNONtarget= ytarget_cne(:,:,tidx2);
+tidx1 = find(Y2==1);
+tidx2 = find(Y2==2);
+ztarget= X2(:,:,tidx1);
+zNONtarget= X2(:,:,tidx2);
 
 C1_t=mean(ztarget,3);
 C1_nt=mean(zNONtarget,3);
 figure;
-%subplot 211
+subplot 211
 for ch=1:size(C1_t,1) 
- h1=  plot(twin,C1_t(ch,:),'b')
+ h1=  plot(twin,C1_t(ch,:),'b');
     hold on
 end
 for ch=1:size(C1_nt,1) 
-  h2=  plot(twin,C1_nt(ch,:),'r')
+  h2=  plot(twin,C1_nt(ch,:),'r');
 end
 hold off
 axis tight
@@ -86,22 +79,17 @@ legend([h1(1), h2(1)], 'error', ' correct')
 xlabel('time')
 ylabel('amplitude')
 
-% for ch = 1 : size(ytarget_cne,1)
-%     for sample = 1 : size(ytarget_cne,2)
-%         ressq_all(sample,ch) = rsquare(ytarget_cne(ch, sample, find(visual==1)), ytarget_cne(ch, sample, find(visual==2)));
-%     end
-% end
-%subplot 212
-%plot_rsquare(twin, ressq_all)
-%axis normal
-
- end
+for ch = 1 : size(X2,1)
+    for sample = 1 : size(X2,2)
+        ressq_all(sample,ch) = rsquare(X2(ch, sample, find(Y2==1)), X2(ch, sample, find(Y2==2)));
+    end
+end
+subplot 212
+plot_rsquare(twin, ressq_all)
+axis normal
 
 end
-
-save  ErrpCalibration ErrpCALIB
-save  ErrpCoadaptation ErrpCORL
- 
+end
 
 function [y_cne, vis, twin] = preprocessdata(EEG, fc, beforefdb, fdtime, nepochs, car,lf,hf)
 
@@ -125,7 +113,6 @@ chEEG = [1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 1]; % 1 for E
 chind = find(chEEG==1);
 cn=length(chind);
 EEG.chanlocs  = EEG.chanlocs(1,chind);
-%EEG.data=gp_lowpass_filtro_matrix(EEG.data,fc,4,fs);
 EEG.data = car_bpfilter(EEG.data(chind,:),car,cn,fs,lf,hf);
 
 %Pre-processing steps in the paper

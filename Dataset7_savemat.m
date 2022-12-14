@@ -90,7 +90,6 @@ ylabel('Amplitude (\muV)');
 title(['Grand average subject ' num2str(pno)]);
 end
 
-save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\Gaze Speller\trials\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1');
-%save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\Gaze Speller\CFS\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1');
+save(['D:\ErrPDatasets\Gaze Speller\trials\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1');
 
 end

@@ -42,7 +42,6 @@ for r = 1:size(run,2)
     beforefb = 0.2*fs;
     
     y_sel = car_bpfilter(y_sel',car,cn,fs,lf,hf);
-   % y_sel=gp_lowpass_filtro_matrix(y_sel,[lf hf],4,fs);  
     j=1;
     label = [];
     errp1 = [];
@@ -94,7 +93,6 @@ for r = 1:size(run,2)
     fs= s.header.SampleRate;
     
     y_sel = car_bpfilter(y_sel',car,cn,fs,lf,hf);
-   % y_sel=gp_lowpass_filtro_matrix(y_sel,[lf hf],4,fs);  
     j=1;
     label = [];
     errp1 = [];
@@ -131,7 +129,7 @@ xlabel('time (s)','FontSize',8)
 ylabel('Amplitude (uV)','FontSize',8)
 title('channel Fz (average of all sessions)','fontweight','bold')           
 
-%  save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\BNCI Moving Cursor\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1', 'ses2_errp', 'ses2_label', 'N_tst2');
+save(['D:\ErrPDatasets\BNCI Moving Cursor\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(pno)],'ses1_errp', 'ses1_label', 'N_tst1', 'ses2_errp', 'ses2_label', 'N_tst2');
 
 end               
 

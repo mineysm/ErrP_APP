@@ -5,13 +5,15 @@ clear;
 clc;
 nofses=[2 2 2 2 1 1 1 2]; %number of sessions
 participant = [1 2 3 4 5 6 7 8];
-plotfig=0; %option for plotting figures
+plotfig=1; %option for plotting figures
 Fold=10;
 fdtime=2;  % event duration after feedback 
 car=0;
 lf=1;
 hf=10;
 cn=8; %'FZ' 'CZ' 'P3' 'PZ' 'P4' 'PO7' 'PO8' 'OZ'
+ytarget_cne_all = [];
+visual_all = [];
 for p=1:length(participant)
 p_id=participant(p);
 fprintf("Participant %d\n",p_id);  
@@ -31,7 +33,6 @@ for exp=1:nofses(p)
     fs=EEG.srate;
     %eeg_eventtypes(EEG);
 
-%EEG.data=gp_lowpass_filtro_matrix(EEG.data,fc,4,fs);
 EEG.data = car_bpfilter(EEG.data,car,cn,fs,lf,hf);
 
 %Pre-processing steps in the paper
@@ -51,13 +52,8 @@ EEG.data = car_bpfilter(EEG.data,car,cn,fs,lf,hf);
 %EEGcor.data=normalizeData(EEGcor.data);
 %EEGerr.data=normalizeData(EEGerr.data);
 %%
- 
-%allchannels = {'Fp1';'Fz';'F3';'F7';'EOG1';'FC5';'FC1';'C3';'T7';'CP5';'CP1';'Pz';'P3';'P7';'O1';'EOG3';'O2';'P4';'P8';'CP6';'CP2';'Cz';'C4';'T8';'EOG2';'FC6';'FC2';'F4';'F8';'Fp2'};
-%chEEG = [1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1 1 1]; % 
-%chind = find(chEEG==1);
-%chn=length(chind);
 
-Xtrain = cat(3, EEGerr.data,  EEGcor.data); % S2cursor -> 30*512*484
+Xtrain = cat(3, EEGerr.data,  EEGcor.data); 
 Ytrain = [zeros(1,size(EEGerr.data,3)) ones(1,size(EEGcor.data,3))];
 Ytrain = Ytrain +1;
 randId = randperm(length(Ytrain));
@@ -67,7 +63,6 @@ tpoints = EEGerr.times;
 twin = 1:fdtime*fs;
 
 y_cne = Xtrain(:, :, randId); 
-%y_cne= double(y_cne);
 vis = Ytrain(randId);
 
 N_tst(exp,1) = length(vis);
@@ -82,11 +77,7 @@ clear EEG EEGcor EEGerr y_cne vis
 end
 
 
-
-ErrpGameAgent(p).sid = ['S_' num2str(p_id)];
-ErrpGameAgent(p).ytarget_cne = ytarget_cne;
-ErrpGameAgent(p).visual = visual;
-ErrpGameAgent(p).N_tst = N_tst;
+save(['D:\ErrPDatasets\Gaming Agent\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p)],'ytarget_cne','visual', 'N_tst');
 
 %%
 if plotfig==1 % Plot all channels
@@ -100,7 +91,7 @@ zNONtarget= ytarget_cne(:,:,tidx2);
 C1_t=mean(ztarget,3);
 C1_nt=mean(zNONtarget,3);
 figure;
-%subplot 211
+subplot 211
 for ch=1:8
     plot(tpoints,C1_t(ch,:),'b')
     hold on
@@ -116,32 +107,25 @@ xlabel('time')
 ylabel('amplitude')
 
 
-% for ch = 1 : size(ytarget_cne,1)
-%     for sample = 1 : size(ytarget_cne,2)
-%         ressq_all(sample,ch) = rsquare(ytarget_cne(ch, sample, find(visual==1)), ytarget_cne(ch, sample, find(visual==2)));
-%     end
-% end
-% subplot 212
-% plot_rsquare(tpoints/1000, ressq_all)
-% axis normal
+for ch = 1 : size(ytarget_cne,1)
+    for sample = 1 : size(ytarget_cne,2)
+        ressq_all(sample,ch) = rsquare(ytarget_cne(ch, sample, find(visual==1)), ytarget_cne(ch, sample, find(visual==2)));
+    end
+end
+subplot 212
+plot_rsquare(tpoints/1000, ressq_all)
+axis normal
 end
 
-end
+ytarget_cne_all = cat(3, ytarget_cne_all, ytarget_cne);
+visual_all = [visual_all visual];
 
-save  ErrpGameAgent ErrpGameAgent
-
-
-ytarget_cne_all = [];
-visual_all = [];
-for p=1:length(participant)
-ytarget_cne_all = cat(3, ytarget_cne_all, ErrpGameAgent(1,p_id).ytarget_cne);
-visual_all = [visual_all ErrpGameAgent(1,p_id).visual];
 end
 
 C1_t_all=mean(ytarget_cne_all(:,:,visual_all==1),3);
 C1_nt_all=mean(ytarget_cne_all(:,:,visual_all==2),3);
 figure;
-%subplot 211
+
 for ch=1:8
     p1=plot(tpoints/1000,C1_t_all(ch,:),'r');
     hold on

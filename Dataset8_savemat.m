@@ -4,7 +4,7 @@
 exp=1;
 participant= [1 2 3 4 5 6 7 8 9 10 11 12];
 stimuli = ["Dis", "Dis", "Con", "Con","Dis", "Dis", "Con", "Con", "Con","Dis", "Dis", "Con"];
- plotfig=0;
+ plotfig=1;
  fdtime=1.5;
  beforefdb = 0.2;
  car=0;
@@ -37,9 +37,8 @@ end
     fprintf("---------------\n");
     
      rawdata = expData.rawData;
-      fs= expData.samplingRate;
-    labels = expData.labelTimeStamps(2,:);
-     %Common average reference
+     fs= expData.samplingRate;
+     labels = expData.labelTimeStamps(2,:);
      EEG = pop_importdata('data',rawdata', 'srate',fs, 'nbchan', 16 );
     
       for i=1:size(expData.labelTimeStamps,2)
@@ -49,10 +48,7 @@ end
       end
      %EEG = pop_reref( EEG, []);
     
-     %EEG.data = gp_lowpass_filtro_matrix(EEG.data,fc,4,fs);
       EEG.data = car_bpfilter(EEG.data,car,cn,fs,lf,hf);  
-   
-    
 
      [EEG, indices] = pop_epoch(EEG,{1 2},[-1*beforefdb fdtime],...
 'newname','feedback epochs',...
@@ -94,10 +90,10 @@ end
                 ylabel('Amplitude')
   end
 
-%     if exp==1
-%         save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\Tactile Feedback (V)\CFS\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p_id)],'ses1_errp', 'ses1_label', 'N_tst1');
-%     else
-%         save(['C:\Users\bci\Desktop\ErrP_APP\ErrPDatasets\Tactile Feedback (VT)\CFS\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p_id)],'ses1_errp', 'ses1_label', 'N_tst1');
-%     end
+    if exp==1
+        save(['D:\ErrPDatasets\Tactile Feedback (V)\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p_id)],'ses1_errp', 'ses1_label', 'N_tst1');
+    else
+        save(['D:\ErrPDatasets\Tactile Feedback (VT)\CAR',num2str(car),'_BP',num2str(lf),'-',num2str(hf),'\subject',num2str(p_id)],'ses1_errp', 'ses1_label', 'N_tst1');
+    end
 
  end
