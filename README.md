@@ -52,7 +52,6 @@ Run `Dataset*_savemat` files for each dataset. You can change the preprocessing 
  
 Run `Dataset*_savemat` files for each dataset. You can change the preprocessing parameters. By default, the signal is bandpass filtered between 1 and 10 Hz.
 
->>>>>>> af61aa9bd3e3dd04b58a03de967162f0f44d9a6c
 Start App Designer (type appdesigner in MATLAB command window)
 Open `ErrP_APP.mlapp`, choose Dataset and subject, and then click Run.
 
