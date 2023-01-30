@@ -1,6 +1,6 @@
 # Single Trial Detection of Error-related Potentials
 
-This repository contains MATLAB code for the paper titled "Single trial detection of error-related potentials in brain–machine interfaces: a survey and comparison of methods," in Journal of Neural Engineering, vol. 20, pp. 5681-5692, 2023, doi: [10.1088/1741-2552/acabe9](https://doi.org/10.1088/1741-2552/acabe9).
+This repository contains MATLAB code for the paper titled "Single trial detection of error-related potentials in brain–machine interfaces: a survey and comparison of methods," in Journal of Neural Engineering, vol. 20, 2023, doi: [10.1088/1741-2552/acabe9](https://doi.org/10.1088/1741-2552/acabe9).
 
 ## Preparation
 
@@ -55,7 +55,7 @@ Run `Dataset*_savemat` files for each dataset. You can change the preprocessing 
 Start App Designer (type appdesigner in MATLAB command window)
 Open `ErrP_APP.mlapp`, choose Dataset and subject, and then click Run.
 
-![alt text](https://github.com/mineysm/ErrP_APP/blob/master/ErrP_App.PNG)
+![alt text](https://github.com/mineysm/ErrP_APP/blob/main/ErrP_App.PNG)
 
 ## Project website
 
